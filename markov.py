@@ -1,5 +1,6 @@
 from random import choice
 import random
+import sys 
 
 
 def open_and_read_file(file_path):
@@ -34,45 +35,40 @@ def make_chains(text_string):
 
     text_string_list = text_string.split()
 
-    length = len(text_string_list) - 2
-    for i in range(length):
-        key_1 = text_string_list[i]
-        key_2 = text_string_list[i+1]
-        value = text_string_list[i+2]
+    length = len(text_string_list) - 2  #setting the range 
+    for i in range(length): 
+        key_1 = text_string_list[i] #setting the first element of our tuple
+        key_2 = text_string_list[i+1] #setting the second element of our tuple 
+        value = text_string_list[i+2] #setting the value of our tuple 
         key_tuple = key_1, key_2 
 
         if key_tuple not in chains:
-            chains[key_tuple] = [value]
+            chains[key_tuple] = [value] #adding key and value to the dictionary 
         else:
-            chains[key_tuple].append(value)
- 
+            chains[key_tuple].append(value) #appending the value to our list of values for each key. 
+    print chains
+    print "\n"
     return chains
 
 def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
 
-    # TODO: check to see if the key exists before adding it to the text file
+    # TODO: the last word in our string does not print i.e. "sam I" instead of "sam i am"
+    # welp
     
     text = ""
+    text_list = []
+    rand_key = random.choice(chains.keys()) #generating a random key from dictionary 
+    while rand_key in chains: 
+        first, second = rand_key #unpack random key from above
+        next_word = random.choice(chains[rand_key]) #binding next word to random word in list associated with random index
+        rand_key = (second, next_word) #binding rand key to a tuple - second word from random index, next word from list
+        text_list.append(next_word)
 
-    rand_key = random.choice(chains.keys())
-    list_of_keys = chains.keys()
-    count = 0
-    length = len(chains.keys()) - 2 # we have 22 keys
-    while count < range(length):
-        first, second = rand_key
-        next_word = random.choice(chains[rand_key])
-        text = text + " " + first + " " + second + " " + next_word 
-        rand_key = (second, next_word)
-
-        count += 1
-
-        if count >= length: 
-            break
-
+    text = ' '.join(text_list)
     print text
         
-input_path = "green-eggs.txt"
+input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
@@ -84,3 +80,5 @@ chains = make_chains(input_text)
 random_text = make_text(chains)
 
 print random_text
+
+
